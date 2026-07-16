@@ -1,0 +1,38 @@
+# Compiled CUDA/C++ files
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.so
+*.dylib
+
+# CUDA specific
+*.cubin
+*.fatbin
+*.ptx
+*.gpu
+*.i
+*.ii
+
+# Build directories
+build/
+cmake-build-*/
+.cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Profiling
+*.nsys-rep
+*.ncu-rep
+*.qdrep
+*.sqlite
