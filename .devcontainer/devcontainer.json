@@ -1,0 +1,32 @@
+{
+    "name": "CUDA Learning Dev",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "cuda-dev",
+    "workspaceFolder": "/workspace",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "nvidia.nsight-vscode-edition",
+                "ms-vscode.cpptools",
+                "ms-vscode.cmake-tools",
+                "twxs.cmake",
+                "jeff-hykin.better-cpp-syntax"
+            ],
+            "settings": {
+                "cmake.configureOnOpen": true,
+                "cmake.buildDirectory": "${workspaceFolder}/build",
+                "C_Cpp.default.includePath": [
+                    "${workspaceFolder}/common",
+                    "/usr/local/cuda/include"
+                ],
+                "files.associations": {
+                    "*.cu": "cuda-cpp",
+                    "*.cuh": "cuda-cpp"
+                }
+            }
+        }
+    },
+    "forwardPorts": [8888],
+    "postCreateCommand": "verify-cuda",
+    "remoteUser": "root"
+}

@@ -1,0 +1,62 @@
+# ============================================================
+# CUDA Learning – Docker Compose
+# ============================================================
+# Usage:
+#   docker compose up -d        # Start container
+#   docker compose exec cuda-dev bash  # Enter shell
+#   docker compose down         # Stop container
+# ============================================================
+
+services:
+  cuda-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cuda-learning-dev
+    image: cuda-learning-dev:latest
+
+    # GPU access
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    # Mount project directory
+    volumes:
+      - .:/workspace
+      - cuda-build-cache:/workspace/build
+
+    # Keep container running
+    stdin_open: true
+    tty: true
+
+    # Environment
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+      - CUDA_VISIBLE_DEVICES=0
+      - CUDAARCHS=75
+      - TZ=Asia/Ho_Chi_Minh
+
+    # Network for Jupyter
+    ports:
+      - "8899:8888"   # Jupyter Notebook
+
+    working_dir: /workspace
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Resource limits
+    shm_size: '2g'
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+volumes:
+  cuda-build-cache:
+    driver: local
