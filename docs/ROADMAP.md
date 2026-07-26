@@ -1,576 +1,280 @@
-# 🗺️ CUDA Mastery Roadmap – Lộ trình chi tiết
+<!-- Language: **English** | [Tiếng Việt](ROADMAP.vi.md) -->
 
-> **Mục tiêu**: Từ zero đến chuyên gia CUDA trong 6-18 tháng
+# Roadmap
 
----
+> From zero to GPU expert in 6–18 months. 63 exercises, 5 projects, one
+> continuous argument: **memory is the bottleneck, and you must measure to know.**
 
-## ⚡ Phase 1: Foundation – Nền tảng (3-4 tuần)
-
-### 🎯 Mục tiêu
-Nắm vững C/C++ và hiểu kiến trúc phần cứng GPU trước khi bắt đầu CUDA.
-
-### 📚 Kiến thức cần nắm
-
-#### 1.1 C/C++ nâng cao (Tuần 1-2)
-- [ ] **Pointers & Memory Management**
-  - Con trỏ, con trỏ hàm, con trỏ void
-  - `malloc`, `calloc`, `realloc`, `free`
-  - Stack vs Heap memory
-  - Memory leaks và cách phát hiện (Valgrind)
-- [ ] **C++ Modern Features**
-  - Templates và template metaprogramming cơ bản
-  - Smart pointers (`unique_ptr`, `shared_ptr`)
-  - Move semantics và rvalue references
-  - Lambda expressions
-  - `constexpr` và compile-time computation
-- [ ] **Build Systems**
-  - Makefile nâng cao
-  - CMake cơ bản đến trung cấp
-  - Compiler flags và optimization levels (`-O0`, `-O2`, `-O3`, `-Ofast`)
-- [ ] **Performance Profiling cơ bản**
-  - `gprof`, `perf`, `Valgrind/Cachegrind`
-  - Cache miss, branch prediction
-  - SIMD intrinsics cơ bản (SSE, AVX)
-
-#### 1.2 Kiến trúc máy tính & GPU (Tuần 3-4)
-- [ ] **CPU Architecture Review**
-  - Pipeline, superscalar, out-of-order execution
-  - Cache hierarchy (L1, L2, L3)
-  - Memory bandwidth và latency
-  - NUMA architecture
-- [ ] **GPU Architecture Fundamentals**
-  - Lịch sử phát triển GPU: từ graphics pipeline đến GPGPU
-  - So sánh CPU vs GPU: throughput vs latency
-  - Streaming Multiprocessor (SM) architecture
-  - CUDA Cores, Tensor Cores, RT Cores
-  - Warp, thread block, grid concepts (lý thuyết)
-- [ ] **NVIDIA GPU Generations**
-  - Kepler → Maxwell → Pascal → Volta → Turing → Ampere → Hopper → Blackwell
-  - Compute Capability và ý nghĩa
-  - Kiến trúc SM qua các thế hệ
-
-### 📖 Tài liệu tham khảo
-| Tài liệu | Loại | Link |
-|-----------|------|------|
-| Computer Organization and Design (Patterson & Hennessy) | Sách | ISBN: 978-0128203316 |
-| NVIDIA GPU Architecture Whitepapers | Whitepaper | developer.nvidia.com |
-| C++ Primer (5th Edition) | Sách | ISBN: 978-0321714114 |
-
-### 🏋️ Bài tập
-1. Viết matrix multiplication bằng C++ thuần (naive + cache-optimized)
-2. Implement memory pool allocator đơn giản
-3. Profile và so sánh performance giữa các phiên bản
-4. Vẽ sơ đồ kiến trúc GPU mà bạn đang sử dụng
+[← back to the repository](../README.md)
 
 ---
 
-## ⚡ Phase 2: CUDA Fundamentals – Lập trình CUDA cơ bản (4-6 tuần)
+## How the curriculum is put together
 
-### 🎯 Mục tiêu
-Viết được CUDA kernel đầu tiên, hiểu execution model và memory model cơ bản.
+Every exercise follows the same shape — **read the theory, fill in the `TODO`s,
+verify against a CPU reference, measure, compare.** Nothing is asserted that the
+program does not demonstrate.
 
-### 📚 Kiến thức cần nắm
+Three threads run the whole way through and are worth naming, because noticing
+them is most of the learning:
 
-#### 2.1 CUDA Programming Model (Tuần 1-2)
-- [ ] **Hello CUDA**
-  - Cài đặt CUDA Toolkit
-  - File `.cu` và `nvcc` compiler
-  - `__global__`, `__device__`, `__host__` qualifiers
-  - Kernel launch syntax: `kernel<<<gridDim, blockDim>>>(args)`
-  - `cudaDeviceSynchronize()`
-- [ ] **Thread Hierarchy**
-  - Thread → Warp → Block → Grid
-  - `threadIdx`, `blockIdx`, `blockDim`, `gridDim`
-  - 1D, 2D, 3D thread organization
-  - Tính toán global thread ID
-  - Boundary checking trong kernel
-- [ ] **Error Handling**
-  - `cudaError_t` và error checking macro
-  - `cudaGetLastError()` vs `cudaPeekAtLastError()`
-  - Best practices cho error handling
+1. **Blocks, not bytes.** Hardware moves data in fixed-size units. A CPU cache
+   line (Phase 1/05) is a GPU memory sector (Phase 3/01). Using part of a block
+   wastes the rest.
+2. **Reuse beats bandwidth.** Cache blocking (Phase 1/02) *is* shared-memory
+   tiling (Phase 3/04) *is* kernel fusion (Phase 5/14).
+3. **Latency is hidden by parallelism.** Multiple accumulators on a CPU
+   (Phase 1/06–07) become many resident warps on a GPU (Phase 3/15).
 
-#### 2.2 Memory Management cơ bản (Tuần 3-4)
-- [ ] **Device Memory**
-  - `cudaMalloc`, `cudaFree`
-  - `cudaMemcpy` (H2D, D2H, D2D)
-  - `cudaMemset`
-  - Unified Memory (`cudaMallocManaged`) – giới thiệu
-- [ ] **Memory Types Overview**
-  - Global Memory
-  - Shared Memory (giới thiệu)
-  - Local Memory / Registers
-  - Constant Memory (giới thiệu)
-  - Texture Memory (giới thiệu)
-- [ ] **Basic Optimization Concepts**
-  - Coalesced memory access là gì
-  - Occupancy là gì
-  - Ý nghĩa của warp size (32)
-
-#### 2.3 Các pattern cơ bản (Tuần 5-6)
-- [ ] **Vector Operations**
-  - Vector addition
-  - Vector scaling (SAXPY/DAXPY)
-  - Dot product (giới thiệu reduction)
-- [ ] **Matrix Operations**
-  - Matrix addition
-  - Naive matrix multiplication
-  - Matrix transpose
-- [ ] **Image Processing cơ bản**
-  - RGB to Grayscale conversion
-  - Simple blur filter (box blur)
-
-### 📖 Tài liệu tham khảo
-| Tài liệu | Loại | Link |
-|-----------|------|------|
-| CUDA C++ Programming Guide | Official Doc | docs.nvidia.com/cuda |
-| CUDA by Example (Sanders & Kandrot) | Sách | ISBN: 978-0131387683 |
-| Professional CUDA C Programming (Cheng et al.) | Sách | ISBN: 978-1118739327 |
-| NVIDIA CUDA Samples | Code | github.com/NVIDIA/cuda-samples |
-
-### 🏋️ Bài tập
-1. **Vector Add**: Viết kernel cộng hai vector, so sánh với CPU
-2. **SAXPY**: `y = a*x + y` trên GPU, đo speedup
-3. **Matrix Multiply**: Naive implementation, đo bandwidth
-4. **Image Blur**: Đọc ảnh PNG, áp dụng box blur trên GPU
-5. **Error Handling**: Tạo wrapper class cho CUDA memory management
-
-### ✅ Checkpoint
-> Bạn nên có thể: viết kernel đơn giản, quản lý bộ nhớ GPU, hiểu thread hierarchy, đo thời gian thực thi
+Times assume ~20 h/week. Halve them if you already write systems C++.
 
 ---
 
-## ⚡ Phase 3: Intermediate CUDA – Tối ưu hóa & Memory (6-8 tuần)
+## Phase 1 · Foundation
 
-### 🎯 Mục tiêu
-Master memory hierarchy, tối ưu hóa kernel, và sử dụng profiling tools.
+**3–4 weeks · ⭐ · [directory](../phase-1-foundation/)**
 
-### 📚 Kiến thức cần nắm
+You cannot optimise a GPU kernel if you cannot explain why a CPU loop is slow.
+Every concept here reappears on the GPU under a different name.
 
-#### 3.1 Memory Optimization (Tuần 1-3)
-- [ ] **Shared Memory Deep Dive**
-  - `__shared__` declaration
-  - Bank conflicts và cách tránh
-  - Tiled matrix multiplication
-  - Dynamic shared memory allocation
-  - Shared memory as software-managed cache
-- [ ] **Global Memory Optimization**
-  - Coalesced access patterns chi tiết
-  - Structure of Arrays (SoA) vs Array of Structures (AoS)
-  - Memory alignment và padding
-  - Vectorized loads (`float2`, `float4`, `int4`)
-- [ ] **Constant Memory**
-  - `__constant__` declaration
-  - `cudaMemcpyToSymbol`
-  - Constant cache behavior
-  - Use cases: convolution kernels, lookup tables
-- [ ] **Texture Memory & Surface Memory**
-  - Texture objects (bindless textures)
-  - Hardware interpolation
-  - Boundary handling modes
-  - Read-only cache (`__ldg()`)
-- [ ] **Unified Memory (Advanced)**
-  - Page migration mechanics
-  - `cudaMemPrefetchAsync`
-  - `cudaMemAdvise`
-  - Performance implications
+| # | Exercise | Core idea |
+|---|---|---|
+| 01 | [matmul-naive-cpu](../phase-1-foundation/exercises/01-matmul-naive-cpu/) | Row-major layout, FLOP counting, honest benchmarking (warmup + median) |
+| 02 | [matmul-cache-blocking](../phase-1-foundation/exercises/02-matmul-cache-blocking/) | Loop order is worth 10×; blocking pays only once the cache gives up |
+| 03 | [memory-pool-allocator](../phase-1-foundation/exercises/03-memory-pool-allocator/) | Arena and pool allocators — why `cudaMalloc` must be avoided in hot paths |
+| 04 | [modern-cpp-toolkit](../phase-1-foundation/exercises/04-modern-cpp-toolkit/) | RAII, move semantics, templates, lambdas — the tools for a device-buffer class |
+| 05 | [cache-and-bandwidth](../phase-1-foundation/exercises/05-cache-and-bandwidth/) | Measure your cache line, your cache levels, your DRAM bandwidth |
+| 06 | [simd-intrinsics](../phase-1-foundation/exercises/06-simd-intrinsics/) | AVX2 lanes ≈ warp lanes; SIMD only helps compute-bound code |
+| 07 | [roofline-model](../phase-1-foundation/exercises/07-roofline-model/) | Build your own roofline; find the register cliff |
+| 08 | [gpu-device-query](../phase-1-foundation/exercises/08-gpu-device-query/) | Your GPU's peaks, ridge point and occupancy budget |
 
-#### 3.2 Execution Optimization (Tuần 4-5)
-- [ ] **Warp-Level Programming**
-  - Warp divergence và control flow
-  - Warp shuffle operations (`__shfl_sync`, `__shfl_down_sync`, etc.)
-  - Warp vote functions (`__ballot_sync`, `__all_sync`, `__any_sync`)
-  - Cooperative groups cơ bản
-- [ ] **Occupancy Optimization**
-  - Factors affecting occupancy: registers, shared memory, block size
-  - `cudaOccupancyMaxPotentialBlockSize`
-  - CUDA Occupancy Calculator
-  - Khi nào occupancy cao KHÔNG tốt
-- [ ] **Instruction-Level Optimization**
-  - Arithmetic intensity
-  - Instruction throughput vs memory throughput
-  - Fast math (`--use_fast_math`, `__fdividef`, `__expf`)
-  - Loop unrolling (`#pragma unroll`)
-
-#### 3.3 Parallel Patterns (Tuần 6-7)
-- [ ] **Reduction**
-  - Sequential addressing reduction
-  - Warp shuffle reduction
-  - Multi-block reduction
-  - Atomic operations (`atomicAdd`, `atomicCAS`, etc.)
-- [ ] **Scan (Prefix Sum)**
-  - Inclusive vs Exclusive scan
-  - Hillis-Steele scan
-  - Blelloch scan
-  - Work-efficient scan
-- [ ] **Histogram**
-  - Naive histogram with atomics
-  - Shared memory privatization
-  - Sorting-based histogram
-- [ ] **Compact / Stream Compaction**
-  - Scatter và gather operations
-  - Predicated compaction
-
-#### 3.4 Profiling & Debugging (Tuần 8)
-- [ ] **NVIDIA Nsight Systems**
-  - Timeline analysis
-  - API trace
-  - Kernel launch analysis
-  - Memory transfer analysis
-- [ ] **NVIDIA Nsight Compute**
-  - Kernel profiling chi tiết
-  - Memory workload analysis
-  - Compute workload analysis
-  - Roofline model analysis
-  - Speed of light (SOL) metrics
-- [ ] **cuda-gdb & compute-sanitizer**
-  - Race condition detection
-  - Memory error detection
-  - Synchronization errors
-- [ ] **Đọc hiểu Performance Metrics**
-  - DRAM throughput, L2 hit rate
-  - Warp execution efficiency
-  - Achieved occupancy
-  - Instruction per clock (IPC)
-
-### 📖 Tài liệu tham khảo
-| Tài liệu | Loại | Link |
-|-----------|------|------|
-| CUDA C++ Best Practices Guide | Official Doc | docs.nvidia.com/cuda |
-| Programming Massively Parallel Processors (Kirk & Hwu) | Sách | ISBN: 978-0323912310 |
-| Nsight Compute Documentation | Tool Doc | docs.nvidia.com/nsight-compute |
-| GPU Gems 3 – Chapter 39 (Parallel Prefix Sum) | Article | developer.nvidia.com |
-
-### 🏋️ Bài tập
-1. **Tiled MatMul**: Implement với shared memory, so sánh với naive
-2. **Parallel Reduction**: Implement tất cả các biến thể, benchmark
-3. **Prefix Sum**: Implement Blelloch scan cho array lớn
-4. **Convolution 2D**: Sử dụng constant memory cho kernel, shared memory cho input tile
-5. **Profile Session**: Profile tất cả bài tập trước đó bằng Nsight, viết report
-
-### ✅ Checkpoint
-> Bạn nên có thể: tối ưu hóa memory access, tránh bank conflicts, sử dụng profiler, implement parallel patterns cơ bản
+**Checkpoint.** You can state, for your own machine: the cache line size, the
+sustained DRAM bandwidth, the single-core ridge point, and — for your GPU — the
+peak bandwidth, peak FP32, ridge point and registers-per-thread budget.
 
 ---
 
-## ⚡ Phase 4: Advanced CUDA – Kỹ thuật nâng cao (8-10 tuần)
+## Phase 2 · CUDA Fundamentals
 
-### 🎯 Mục tiêu
-Master CUDA streams, multi-GPU, dynamic parallelism, và advanced optimization.
+**4–6 weeks · ⭐⭐ · [directory](../phase-2-cuda-fundamentals/)**
 
-### 📚 Kiến thức cần nắm
+Write correct kernels and understand what a launch actually costs. Optimisation
+comes later; correctness and honest measurement come first.
 
-#### 4.1 Asynchronous Execution (Tuần 1-3)
-- [ ] **CUDA Streams**
-  - Default stream behavior
-  - Creating và managing streams
-  - Overlapping computation và data transfer
-  - Stream priorities
-  - Per-thread default stream
-- [ ] **CUDA Events**
-  - Timing với events
-  - Stream synchronization với events
-  - `cudaEventRecord`, `cudaEventSynchronize`
-  - `cudaStreamWaitEvent`
-- [ ] **CUDA Graphs**
-  - Graph capture mode
-  - Explicit graph construction
-  - Graph instantiation và launch
-  - Graph update
-  - Performance benefits
-- [ ] **Pinned Memory & Async Transfers**
-  - `cudaMallocHost` / `cudaHostAlloc`
-  - `cudaMemcpyAsync`
-  - Write-Combined memory
-  - Mapped pinned memory (zero-copy)
+| # | Exercise | Core idea |
+|---|---|---|
+| 01 | [hello-cuda](../phase-2-cuda-fundamentals/exercises/01-hello-cuda/) | `__global__`, launch syntax, global id, bounds checks, async errors |
+| 02 | [thread-indexing](../phase-2-cuda-fundamentals/exercises/02-thread-indexing/) | 1D/2D/3D grids, and the grid-stride loop |
+| 03 | vector-add | The full `cudaMalloc`/`Memcpy`/`Free` cycle — and why PCIe often wins |
+| 04 | saxpy | Effective bandwidth as the metric for memory-bound kernels |
+| 05 | error-handling | Sticky errors, sync vs async failures, `compute-sanitizer` |
+| 06 | matrix-add-2d | 2D launches on real 2D data |
+| 07 | matmul-naive | The GPU baseline every later matmul is measured against |
+| 08 | transpose-naive | A kernel that is *correct* and *slow* — sets up Phase 3 |
+| 09 | rgb-to-grayscale | Image data, PPM I/O, per-pixel parallelism |
+| 10 | box-blur | Stencils, halos, boundary handling |
+| 11 | unified-memory | `cudaMallocManaged`, page migration, `cudaMemPrefetchAsync` |
+| 12 | device-buffer-class | RAII around device memory — Phase 1/04 applied |
 
-#### 4.2 Multi-GPU Programming (Tuần 4-5)
-- [ ] **Multi-GPU Basics**
-  - `cudaSetDevice`
-  - Peer-to-peer access (`cudaDeviceEnablePeerAccess`)
-  - P2P memory copy
-  - Multi-GPU topology (NVLink, PCIe)
-- [ ] **Multi-GPU Patterns**
-  - Data parallelism across GPUs
-  - Model parallelism concepts
-  - Halo exchange pattern
-  - Load balancing
-- [ ] **NCCL (NVIDIA Collective Communication Library)**
-  - AllReduce, Broadcast, AllGather
-  - Ring-based vs tree-based algorithms
-  - Integration với multi-GPU code
-
-#### 4.3 Dynamic Parallelism & Cooperative Groups (Tuần 6-7)
-- [ ] **Dynamic Parallelism**
-  - Launching kernels from kernels
-  - Memory visibility rules
-  - Synchronization in nested kernels
-  - Use cases: adaptive algorithms, recursive algorithms
-- [ ] **Cooperative Groups (Advanced)**
-  - Thread block groups
-  - Grid-level synchronization
-  - Multi-grid groups
-  - Tiled partitions
-  - Custom group types
-
-#### 4.4 Advanced Optimization (Tuần 8-10)
-- [ ] **Register Optimization**
-  - Register pressure
-  - `__launch_bounds__`
-  - Register spilling
-  - Trade-off: registers vs occupancy
-- [ ] **Memory Access Patterns**
-  - Global memory transaction sizes
-  - L2 cache residency control (Ampere+)
-  - `cudaAccessPolicyWindow`
-  - Persistent kernels
-- [ ] **Atomic Operations (Advanced)**
-  - System-wide atomics
-  - Custom atomic operations với `atomicCAS`
-  - Lock-free data structures
-  - Memory ordering và `__threadfence`
-- [ ] **PTX & SASS**
-  - Đọc PTX assembly cơ bản
-  - `cuobjdump` để xem SASS
-  - Inline PTX assembly
-  - Hiểu scheduling và latency hiding
-
-### 📖 Tài liệu tham khảo
-| Tài liệu | Loại | Link |
-|-----------|------|------|
-| CUDA C++ Programming Guide (Advanced chapters) | Official Doc | docs.nvidia.com/cuda |
-| GTC Presentations | Conference | nvidia.com/gtc |
-| CUDA Graphs documentation | Official Doc | docs.nvidia.com/cuda |
-| NCCL Developer Guide | Official Doc | docs.nvidia.com/nccl |
-
-### 🏋️ Bài tập
-1. **Pipeline**: Overlap H2D transfer → Kernel → D2H transfer với streams
-2. **Multi-GPU MatMul**: Chia matrix ra nhiều GPU, tính song song
-3. **CUDA Graph**: Convert một pipeline phức tạp sang CUDA Graph
-4. **Merge Sort**: Implement với dynamic parallelism
-5. **Lock-free Queue**: Implement trên GPU với atomics
-
-### ✅ Checkpoint
-> Bạn nên có thể: sử dụng streams và events, lập trình multi-GPU, đọc PTX, tối ưu hóa nâng cao
+**Checkpoint.** You can write a correct kernel for a new problem, manage device
+memory without leaking, report effective bandwidth, and explain why a vector add
+is *slower* on the GPU once transfers are counted.
 
 ---
 
-## ⚡ Phase 5: Expert Topics – Chuyên sâu & Thư viện (6-8 tuần)
+## Phase 3 · Intermediate
 
-### 🎯 Mục tiêu
-Làm chủ CUDA ecosystem, thư viện chuyên dụng, và ứng dụng thực tế.
+**6–8 weeks · ⭐⭐⭐ · [directory](../phase-3-intermediate/)**
 
-### 📚 Kiến thức cần nắm
+The heart of the curriculum. This is where "it works" becomes "it is fast", and
+where the payoff for Phase 1 arrives.
 
-#### 5.1 CUDA Libraries (Tuần 1-2)
-- [ ] **cuBLAS**
-  - GEMM operations
-  - Batched operations
-  - cuBLAS-Lt cho mixed precision
-  - Tensor Core acceleration
-- [ ] **cuDNN**
-  - Convolution algorithms
-  - Forward/backward pass
-  - Workspace management
-  - Fusion opportunities
-- [ ] **cuFFT**
-  - 1D, 2D, 3D FFT
-  - Batched FFT
-  - Multi-GPU FFT
-- [ ] **Thrust & CUB**
-  - Thrust algorithms (sort, reduce, scan, transform)
-  - CUB block-level và device-level primitives
-  - Custom operators và iterators
-- [ ] **cuSPARSE & cuSOLVER**
-  - Sparse matrix formats (CSR, CSC, COO, BSR)
-  - Sparse-dense operations
-  - Linear system solvers
+| # | Exercise | Core idea |
+|---|---|---|
+| 01 | memory-coalescing | The single biggest GPU performance factor, measured |
+| 02 | shared-memory-basics | `__shared__`, `__syncthreads__`, block-local cooperation |
+| 03 | bank-conflicts | 32 banks, why padding by one element fixes a 32× slowdown |
+| 04 | tiled-matmul | Phase 1/02's blocking, in shared memory — here it is worth 5–10× |
+| 05 | transpose-optimized | Coalesced read *and* write via a shared tile |
+| 06 | reduction-variants | Six kernels, each faster than the last — the classic study |
+| 07 | warp-shuffle | `__shfl_down_sync`, ballot, vote — registers instead of shared memory |
+| 08 | atomics | `atomicAdd`, `atomicCAS`, contention, custom float atomics |
+| 09 | histogram | Privatisation: turning global contention into shared-memory contention |
+| 10 | scan-hillis-steele | Inclusive scan within a block |
+| 11 | scan-blelloch | Work-efficient scan, arbitrary length, multi-block |
+| 12 | stream-compaction | Scan + scatter, the backbone of filtering on a GPU |
+| 13 | conv-1d-constant | `__constant__` memory and its broadcast cache |
+| 14 | conv-2d-shared | 2D stencil with a haloed shared tile |
+| 15 | occupancy-tuning | Registers vs shared memory vs block size; when high occupancy hurts |
+| 16 | profiling-nsight | Nsight Systems and Nsight Compute on your own kernels |
 
-#### 5.2 Mixed Precision & Tensor Cores (Tuần 3-4)
-- [ ] **FP16 / BF16 / TF32 / FP8**
-  - Floating point format so sánh
-  - `half` và `__nv_bfloat16` types
-  - Precision vs Performance trade-offs
-  - Automatic mixed precision concepts
-- [ ] **Tensor Core Programming**
-  - WMMA (Warp Matrix Multiply Accumulate) API
-  - `nvcuda::wmma` namespace
-  - Fragment types và operations
-  - MMA PTX instructions
-  - Tensor Core trong deep learning
-- [ ] **CUTLASS**
-  - GEMM templates
-  - Epilogue fusion
-  - Custom tile sizes
-  - Profiling CUTLASS kernels
-
-#### 5.3 CUDA cho AI/ML (Tuần 5-6)
-- [ ] **Custom CUDA Kernels cho Deep Learning**
-  - Custom PyTorch extensions (C++/CUDA)
-  - TorchScript custom ops
-  - ONNX Runtime custom ops
-  - Triton kernel language (so sánh)
-- [ ] **Inference Optimization**
-  - TensorRT overview
-  - Quantization (INT8, FP8)
-  - Kernel fusion strategies
-  - Memory optimization cho inference
-- [ ] **Training Optimization**
-  - Gradient accumulation
-  - Data loading pipeline
-  - Communication/computation overlap
-  - Flash Attention concept
-
-#### 5.4 Interoperability (Tuần 7-8)
-- [ ] **CUDA + OpenGL/Vulkan**
-  - Graphics interop
-  - Shared buffers
-  - Real-time visualization
-- [ ] **CUDA + Python**
-  - PyCUDA
-  - Numba CUDA
-  - CuPy
-  - `ctypes` / `cffi` binding
-- [ ] **CUDA Driver API**
-  - Driver API vs Runtime API
-  - Context management
-  - Module loading
-  - JIT compilation với NVRTC
-
-### 📖 Tài liệu tham khảo
-| Tài liệu | Loại | Link |
-|-----------|------|------|
-| cuBLAS / cuDNN / cuFFT Documentation | Official Doc | docs.nvidia.com |
-| CUTLASS GitHub Repository | Code | github.com/NVIDIA/cutlass |
-| Mixed Precision Training (Micikevicius et al., 2018) | Paper | arxiv.org |
-| Flash Attention (Dao et al., 2022) | Paper | arxiv.org |
-| Triton Language Documentation | Doc | triton-lang.org |
-
-### 🏋️ Bài tập
-1. **cuBLAS GEMM**: Benchmark so với custom kernel
-2. **Tensor Core GEMM**: Implement với WMMA API
-3. **PyTorch Extension**: Viết custom CUDA op cho PyTorch
-4. **Inference Engine**: Build simple inference engine với kernel fusion
-5. **Real-time Visualization**: CUDA compute + OpenGL render
-
-### ✅ Checkpoint
-> Bạn nên có thể: sử dụng thành thạo CUDA libraries, lập trình Tensor Cores, viết custom ops cho frameworks
+**Checkpoint.** Given a slow kernel you can profile it, name the limiter from the
+metrics, apply the right fix, and prove the improvement.
 
 ---
 
-## ⚡ Phase 6: Mastery – Dự án thực tế & Chuyên gia (Ongoing)
+## Phase 4 · Advanced
 
-### 🎯 Mục tiêu
-Áp dụng tất cả kiến thức vào dự án thực tế, đóng góp cho cộng đồng, và liên tục cập nhật.
+**8–10 weeks · ⭐⭐⭐⭐ · [directory](../phase-4-advanced/)**
 
-### 📚 Dự án thực tế đề xuất
+Beyond one kernel: overlapping, scaling out, and reading what the compiler
+actually produced.
 
-#### 6.1 Dự án cấp độ Portfolio
-- [ ] **GPU-accelerated Ray Tracer**
-  - Path tracing với BVH acceleration
-  - Multiple bounces, soft shadows
-  - Denoising
-- [ ] **Custom Deep Learning Framework**
-  - Forward/backward pass engine
-  - Autograd system
-  - Optimizers (SGD, Adam)
-  - Operator fusion
-- [ ] **Real-time Fluid Simulation**
-  - Navier-Stokes solver
-  - SPH (Smoothed Particle Hydrodynamics)
-  - Real-time visualization
-- [ ] **GPU Database Engine**
-  - Columnar storage
-  - GPU-accelerated queries (filter, join, aggregate)
-  - Query compilation
-- [ ] **LLM Inference Engine**
-  - KV-cache management
-  - PagedAttention implementation
-  - Batched inference
-  - Speculative decoding
+| # | Exercise | Core idea |
+|---|---|---|
+| 01 | pinned-memory | Pageable vs pinned transfer bandwidth |
+| 02 | streams-basics | Concurrency, the default-stream trap |
+| 03 | streams-pipeline | Overlap H2D → kernel → D2H, chunked |
+| 04 | events-and-sync | `cudaEvent`, `cudaStreamWaitEvent`, dependency graphs by hand |
+| 05 | cuda-graphs | Capture a pipeline; eliminate per-launch overhead |
+| 06 | cooperative-groups | Tiled partitions, grid-wide synchronisation |
+| 07 | dynamic-parallelism | Kernels launching kernels (CDP2 semantics, CUDA 12+) |
+| 08 | multi-gpu-basics | Device enumeration, peer access, P2P copies |
+| 09 | multi-gpu-matmul | Splitting work across devices |
+| 10 | lock-free-queue | `atomicCAS`, `__threadfence`, memory ordering on a GPU |
+| 11 | register-pressure | `__launch_bounds__`, spilling, the occupancy trade-off |
+| 12 | ptx-and-sass | `cuobjdump`, `nvdisasm`, inline PTX |
+| 13 | persistent-kernel | Megakernels and producer/consumer on the device |
 
-#### 6.2 Đóng góp cộng đồng
-- [ ] Contribute to NVIDIA open-source projects (CUTLASS, cuDF, etc.)
-- [ ] Viết blog posts / tutorials về CUDA
-- [ ] Answer questions trên Stack Overflow / NVIDIA Forums
-- [ ] Present tại GTC hoặc local meetups
-- [ ] Publish benchmark results và optimizations
+Exercises 08 and 09 detect a single-GPU machine and skip cleanly.
 
-#### 6.3 Cập nhật liên tục
-- [ ] Theo dõi GTC keynotes và sessions
-- [ ] Đọc NVIDIA Technical Blog
-- [ ] Theo dõi CUDA Toolkit releases
-- [ ] Nghiên cứu kiến trúc GPU mới
-- [ ] Học thêm: SYCL, HIP (AMD), oneAPI (Intel)
+**Checkpoint.** You can overlap transfer with compute, keep multiple GPUs busy,
+read SASS to explain a stall, and reason about memory ordering between threads.
 
 ---
 
-## 📊 Metrics đánh giá tiến độ
+## Phase 5 · Expert
 
-### Mức độ thành thạo
+**6–8 weeks · ⭐⭐⭐⭐⭐ · [directory](../phase-5-expert/)**
 
-| Level | Tiêu chí | Bằng chứng |
-|-------|----------|------------|
-| **Beginner** | Viết được kernel cơ bản, quản lý bộ nhớ | Hoàn thành Phase 1-2 |
-| **Intermediate** | Tối ưu hóa kernel, sử dụng profiler | Hoàn thành Phase 3 |
-| **Advanced** | Multi-GPU, streams, async execution | Hoàn thành Phase 4 |
-| **Expert** | Library integration, Tensor Cores, custom ops | Hoàn thành Phase 5 |
-| **Master** | Dự án thực tế, đóng góp cộng đồng, mentoring | Phase 6 ongoing |
+Stop writing everything yourself: know the ecosystem, and know when a library
+will beat you (it usually will).
 
-### Performance Benchmarks (tự đánh giá)
+| # | Exercise | Core idea |
+|---|---|---|
+| 01 | thrust-basics | STL-style algorithms on the device |
+| 02 | cub-primitives | Block- and device-level building blocks vs your hand-written versions |
+| 03 | cublas-gemm | The column-major trap; how far your tiled matmul really is |
+| 04 | cublas-batched | Batched and strided-batched GEMM |
+| 05 | curand-monte-carlo | Device-side RNG, and what "parallel random" means |
+| 06 | cufft-convolution | Convolution via FFT |
+| 07 | cusparse-spmv | CSR SpMV — irregular, memory bound, unavoidable |
+| 08 | mixed-precision | FP16/BF16/TF32, `half2` vectorisation, accuracy vs speed |
+| 09 | tensor-core-wmma | The WMMA API (needs sm_70+) |
+| 10 | cutlass-gemm | Templated GEMM, epilogue fusion *(optional dependency)* |
+| 11 | pytorch-extension | A custom CUDA op callable from Python *(optional dependency)* |
+| 12 | nvrtc-jit | Runtime compilation and the driver API |
+| 13 | cuda-opengl-interop | Zero-copy visualisation *(optional dependency)* |
+| 14 | kernel-fusion | Fewer passes over memory — the highest-leverage optimisation left |
 
-| Benchmark | Beginner | Expert |
-|-----------|----------|--------|
-| MatMul (4096x4096) | < 5% cuBLAS | > 80% cuBLAS |
-| Reduction | < 10% peak bandwidth | > 90% peak bandwidth |
-| Convolution | Naive | > 70% cuDNN |
-| Memory Bandwidth | < 30% theoretical | > 85% theoretical |
+Optional-dependency exercises build only with `-DCL_ENABLE_OPTIONAL=ON`.
 
----
-
-## 🔗 Tài nguyên bổ sung
-
-### Sách (theo thứ tự đọc)
-1. 📘 **CUDA by Example** – Sanders & Kandrot (beginner)
-2. 📗 **Programming Massively Parallel Processors** – Kirk & Hwu (intermediate)
-3. 📕 **Professional CUDA C Programming** – Cheng, Grossman, McKercher (intermediate-advanced)
-4. 📙 **CUDA Handbook** – Nicholas Wilt (reference)
-
-### Online Courses
-1. 🎓 NVIDIA DLI – Fundamentals of Accelerated Computing with CUDA C/C++
-2. 🎓 Coursera – GPU Programming Specialization (Johns Hopkins)
-3. 🎓 Udacity – Intro to Parallel Programming (CS344)
-
-### Communities
-- 💬 NVIDIA Developer Forums
-- 💬 r/CUDA (Reddit)
-- 💬 GPU Computing Discord servers
-- 💬 Stack Overflow [cuda] tag
-
-### Blogs & Channels
-- 📝 NVIDIA Technical Blog (developer.nvidia.com/blog)
-- 📝 Lei Mao's Blog (leimao.github.io)
-- 📝 Simon Boehm's Blog (siboehm.com)
-- 🎥 NVIDIA GTC Sessions (YouTube)
+**Checkpoint.** You reach for the right library first, can call a Tensor Core
+kernel, and can explain when writing your own is justified.
 
 ---
 
-## 📅 Weekly Schedule Template
+## Phase 6 · Mastery
 
-```
-Monday:    Lý thuyết (đọc sách / documentation)      2-3h
-Tuesday:   Coding (implement concepts)                 3-4h
-Wednesday: Lý thuyết + Coding                         2-3h
-Thursday:  Coding (bài tập thực hành)                  3-4h
-Friday:    Profiling & Optimization (review code)      2-3h
-Saturday:  Dự án lớn (project work)                    4-6h
-Sunday:    Review + đọc papers / blog posts            2-3h
-                                          Total: ~20-25h/week
-```
+**Ongoing · 🏆 · [directory](../phase-6-mastery/)**
+
+Each project ships an architecture document, a milestone breakdown, evaluation
+criteria, and one core module implemented as a worked example. The rest is yours.
+
+| Project | What you will build |
+|---|---|
+| gpu-ray-tracer | Path tracing with BVH traversal, multiple bounces, denoising |
+| mini-dl-framework | Autograd, forward/backward kernels, SGD/Adam, operator fusion |
+| fluid-simulation | Navier–Stokes or SPH, real-time, with visualisation |
+| gpu-database | Columnar storage, GPU filter/join/aggregate, query compilation |
+| llm-inference-engine | KV-cache management, paged attention, batched decoding |
+
+**Checkpoint.** Two finished projects, a profiler report for each, and a written
+account of what you optimised and why.
 
 ---
 
-> **Lời khuyên quan trọng nhất**: CUDA không thể học chỉ bằng lý thuyết. Hãy **code mỗi ngày**, **profile mọi thứ**, và **so sánh với implementation tốt nhất** (cuBLAS, cuDNN). Sự khác biệt giữa kernel "chạy được" và kernel "chạy nhanh" là nơi bạn thực sự học được CUDA.
+## Progress tracking
+
+| Level | Criterion | Evidence |
+|---|---|---|
+| Beginner | Correct kernels, device memory managed safely | Phases 1–2 complete |
+| Intermediate | Profile, diagnose, optimise | Phase 3 complete |
+| Advanced | Streams, multi-GPU, async execution, SASS | Phase 4 complete |
+| Expert | Libraries, Tensor Cores, custom framework ops | Phase 5 complete |
+| Master | Shipped projects, community contributions | Phase 6 ongoing |
+
+Benchmarks to hold yourself to:
+
+| Kernel | Beginner | Expert |
+|---|---|---|
+| SGEMM 4096³ | < 5% of cuBLAS | > 80% of cuBLAS |
+| Reduction | < 10% of peak bandwidth | > 90% of peak bandwidth |
+| 2D convolution | naive | > 70% of cuDNN |
+| Memory copy | < 30% of theoretical | > 85% of theoretical |
 
 ---
 
-*Lộ trình được thiết kế dựa trên kinh nghiệm thực tế trong GPU Computing. Điều chỉnh tốc độ phù hợp với trình độ hiện tại của bạn.*
+## Suggested weekly rhythm
+
+| Day | Focus | Hours |
+|---|---|---|
+| Mon | Theory — read the exercise README and its references | 2–3 |
+| Tue | Code — fill in the `TODO`s | 3–4 |
+| Wed | Theory + code | 2–3 |
+| Thu | Code — finish, verify, measure | 3–4 |
+| Fri | Profile and optimise; compare against the reference solution | 2–3 |
+| Sat | Project work | 4–6 |
+| Sun | Review, papers, blog posts | 2–3 |
+
+---
+
+## Further reading
+
+**Books, in reading order**
+
+1. *CUDA by Example* — Sanders & Kandrot (beginner)
+2. *Programming Massively Parallel Processors*, 4th ed. — Kirk & Hwu (the standard text)
+3. *Professional CUDA C Programming* — Cheng, Grossman & McKercher
+4. *The CUDA Handbook* — Nicholas Wilt (reference)
+
+**Documentation**
+
+- [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [CUDA C++ Best Practices Guide](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/)
+- [Nsight Compute](https://docs.nvidia.com/nsight-compute/) · [Nsight Systems](https://docs.nvidia.com/nsight-systems/)
+
+**Papers**
+
+- Volkov, *Understanding Latency Hiding on GPUs* (2016)
+- Micikevicius et al., *Mixed Precision Training* (2018)
+- Dao et al., *FlashAttention* (2022) and *FlashAttention-2* (2023)
+- Williams, Waterman & Patterson, *Roofline* (CACM 2009)
+
+**Courses**
+
+- [NVIDIA DLI — Fundamentals of Accelerated Computing with CUDA C/C++](https://www.nvidia.com/en-us/training/)
+- [Coursera — GPU Programming Specialization (Johns Hopkins)](https://www.coursera.org/specializations/gpu-programming)
+- [Udacity CS344 — Intro to Parallel Programming](https://github.com/udacity/cs344) (archived, still excellent)
+
+**Blogs**
+
+- [NVIDIA Technical Blog](https://developer.nvidia.com/blog)
+- [Simon Boehm — How to optimise a CUDA matmul kernel](https://siboehm.com/articles/22/CUDA-MMM)
+- [Lei Mao's blog](https://leimao.github.io/)
+
+**Tools**
+
+- [Nsight Systems](https://developer.nvidia.com/nsight-systems) · [Nsight Compute](https://developer.nvidia.com/nsight-compute)
+- [CUDA Occupancy Calculator](https://docs.nvidia.com/cuda/cuda-occupancy-calculator/)
+- [Compiler Explorer](https://godbolt.org/) — has CUDA support, useful for reading PTX
+- [NVIDIA CUDA Samples](https://github.com/NVIDIA/cuda-samples)
+
+Additional links are collected in [`resources/README.md`](../resources/README.md).
+
+---
+
+> **The one piece of advice that matters.** CUDA cannot be learned from theory.
+> Code every day, profile everything, and always compare against the best
+> available implementation (cuBLAS, cuDNN, CUB). The gap between a kernel that
+> *runs* and a kernel that is *fast* is where the learning actually happens.

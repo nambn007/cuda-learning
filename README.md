@@ -1,58 +1,154 @@
-# 🚀 CUDA Mastery Roadmap
+<div align="center">
 
-> **Lộ trình toàn diện để trở thành chuyên gia lập trình CUDA GPU**
-> 
-> Được thiết kế bởi kinh nghiệm nhiều năm làm việc trong lĩnh vực GPU Computing.
+# CUDA Learning
+
+**A hands-on CUDA curriculum — from C++ fundamentals to GPU mastery**
+
+**🇬🇧 English** · [🇻🇳 Tiếng Việt](README.vi.md)
+
+[Roadmap](docs/ROADMAP.md) · [Setup](docs/SETUP.md) · [Glossary](docs/GLOSSARY.md) · [Contributing](CONTRIBUTING.md)
+
+</div>
 
 ---
 
-## 📋 Tổng quan
+## What this is
 
-Lộ trình này được chia thành **6 giai đoạn** từ cơ bản đến chuyên gia, mỗi giai đoạn có mục tiêu rõ ràng, tài liệu tham khảo và bài tập thực hành.
+Six phases, 63 exercises and 5 portfolio projects that take you from "I know some
+C++" to writing GPU kernels you can defend with a profiler.
 
-| Giai đoạn | Tên | Thời gian | Mức độ |
-|-----------|-----|-----------|--------|
-| 1 | Foundation – Nền tảng C/C++ & Kiến trúc GPU | 3-4 tuần | ⭐ |
-| 2 | CUDA Fundamentals – Lập trình CUDA cơ bản | 4-6 tuần | ⭐⭐ |
-| 3 | Intermediate CUDA – Tối ưu hóa & Memory | 6-8 tuần | ⭐⭐⭐ |
-| 4 | Advanced CUDA – Kỹ thuật nâng cao | 8-10 tuần | ⭐⭐⭐⭐ |
-| 5 | Expert Topics – Chuyên sâu & Thư viện | 6-8 tuần | ⭐⭐⭐⭐⭐ |
-| 6 | Mastery – Dự án thực tế & Đóng góp | Ongoing | 🏆 |
+Every exercise ships as **four files**:
 
-**Tổng thời gian ước tính: 6-9 tháng** (học full-time) hoặc **12-18 tháng** (part-time)
-Fix
----
+| File | What it is |
+|---|---|
+| `README.md` / `README.vi.md` | the problem, the theory, and why it matters — in both languages |
+| `main.cu` | a **starter** with `TODO`s for you to fill in |
+| `solution.cu` | a **reference solution**, commented to explain *why*, not *what* |
+| `reference.h` | the shared CPU golden result, so both are checked identically |
 
-## 📁 Cấu trúc thư mục
+Every program **verifies its own result against a CPU reference and exits
+non-zero on mismatch**, so the whole repository doubles as a regression suite:
 
-```
-cuda-learning/
-├── README.md                    # File này
-├── docs/
-│   └── ROADMAP.md              # Lộ trình chi tiết
-├── phase-1-foundation/          # Giai đoạn 1
-├── phase-2-cuda-fundamentals/   # Giai đoạn 2
-├── phase-3-intermediate/        # Giai đoạn 3
-├── phase-4-advanced/            # Giai đoạn 4
-├── phase-5-expert/              # Giai đoạn 5
-├── phase-6-mastery/             # Giai đoạn 6
-└── resources/                   # Tài liệu tham khảo
+```bash
+ctest --test-dir build --output-on-failure
 ```
 
----
+And every program **reports its own performance** in the units that matter —
+GB/s, GFLOP/s, and speedup against a baseline. You are never asked to take a
+claim on trust.
 
-## 🛠️ Yêu cầu môi trường
+## Quick start
 
-- **GPU**: NVIDIA GPU (Compute Capability >= 5.0, khuyến nghị >= 7.0)
-- **CUDA Toolkit**: >= 11.0 (khuyến nghị 12.x)
-- **Compiler**: gcc/g++ >= 9.0, nvcc
-- **OS**: Linux (Ubuntu 22.04+ khuyến nghị) hoặc Windows với WSL2
-- **IDE**: VS Code + CUDA extensions hoặc Nsight
+```bash
+git clone <this-repo> && cd cuda-learning
 
----
+# 1. Development environment (CUDA toolkit, Nsight, profilers)
+docker compose up -d --build
+docker compose exec cuda-dev bash
 
-## 🚦 Bắt đầu từ đâu?
+# 2. Check the GPU is really usable
+verify-cuda
 
-1. Đọc [ROADMAP.md](docs/ROADMAP.md) để hiểu chi tiết từng giai đoạn
-2. Bắt đầu với `phase-1-foundation/` nếu bạn chưa vững C/C++
-3. Nhảy thẳng vào `phase-2-cuda-fundamentals/` nếu đã thành thạo C/C++
+# 3. Build everything and run the reference solutions
+./scripts/build.sh
+./scripts/run-all.sh
+
+# 4. Start learning
+cat phase-1-foundation/exercises/01-matmul-naive-cpu/README.md
+```
+
+No Docker? See [docs/SETUP.md](docs/SETUP.md) for a native install.
+
+## The six phases
+
+| Phase | Topic | Exercises | Time | Level |
+|---|---|---|---|---|
+| [1](phase-1-foundation/) | **Foundation** — C++, caches, SIMD, roofline | 8 | 3–4 weeks | ⭐ |
+| [2](phase-2-cuda-fundamentals/) | **CUDA Fundamentals** — kernels, memory, indexing | 12 | 4–6 weeks | ⭐⭐ |
+| [3](phase-3-intermediate/) | **Intermediate** — coalescing, shared memory, parallel patterns | 16 | 6–8 weeks | ⭐⭐⭐ |
+| [4](phase-4-advanced/) | **Advanced** — streams, graphs, multi-GPU, atomics, PTX | 13 | 8–10 weeks | ⭐⭐⭐⭐ |
+| [5](phase-5-expert/) | **Expert** — cuBLAS, CUB, Tensor Cores, mixed precision | 14 | 6–8 weeks | ⭐⭐⭐⭐⭐ |
+| [6](phase-6-mastery/) | **Mastery** — five portfolio projects | 5 projects | ongoing | 🏆 |
+
+Full breakdown with per-exercise objectives: **[docs/ROADMAP.md](docs/ROADMAP.md)**.
+
+**Where to start.** Solid on C++, caches and the roofline model? Jump to Phase 2.
+Otherwise Phase 1 is not filler — every idea in it (row-major layout, cache lines,
+SIMD lanes, arithmetic intensity) reappears on the GPU under a different name, and
+Phase 3 assumes you already own them.
+
+## How to work through an exercise
+
+```bash
+# 1. Read the problem
+cat phase-2-cuda-fundamentals/exercises/03-vector-add/README.md
+
+# 2. Fill in the TODOs in main.cu, then build and run
+cmake --build build --target p2_03_vector_add -j
+./build/bin/p2/p2_03_vector_add
+
+# 3. Stuck, or want to compare? Read the reference solution
+cmake --build build --target p2_03_vector_add_sol -j
+./build/bin/p2/p2_03_vector_add_sol
+```
+
+Running an unfinished starter is safe: it prints what is still missing instead of
+crashing.
+
+Target names follow `p<phase>_<number>_<slug>`, with `_sol` for the reference
+solution. Binaries land in `build/bin/p<phase>/`.
+
+## Requirements
+
+- **GPU:** NVIDIA, compute capability ≥ 5.0. Some Phase 5 exercises need ≥ 7.0
+  (Tensor Cores) and skip themselves cleanly otherwise.
+- **CUDA Toolkit:** ≥ 11.0, 12.x recommended. CUDA 13 works — affected code is
+  version-guarded.
+- **Host compiler:** GCC ≥ 9 or Clang ≥ 10, C++17.
+- **CMake:** ≥ 3.20.
+
+The build detects your GPU automatically (`-DCUDA_ARCH=native`). Override with
+`-DCUDA_ARCH=86`, or `-DCUDA_ARCH=portable` for a fat binary.
+
+Exercises needing more than one GPU, or an external dependency such as CUTLASS or
+PyTorch, **skip themselves with an explanation** rather than failing the suite.
+
+## Repository layout
+
+```
+common/              shared headers: error checking, timing, verification, PPM I/O
+cmake/               exercise auto-discovery
+docs/                roadmap, setup, glossary   (each with a .vi.md twin)
+scripts/             build.sh, run-all.sh, new-exercise.sh
+phase-N-*/
+  README.md            phase overview and checklist
+  exercises/NN-slug/   README.md, README.vi.md, main.cu, solution.cu, reference.h
+phase-6-mastery/
+  projects/slug/       spec, architecture, milestones, starter code
+```
+
+There is no central target list. Drop a folder with a `main.cu` into any
+`exercises/` directory, re-run `cmake`, and it builds — see
+[`scripts/new-exercise.sh`](scripts/new-exercise.sh).
+
+## Bilingual by design
+
+Every document exists twice: `X.md` (English) and `X.vi.md` (Tiếng Việt), with a
+language switcher on the first line of each. **Code comments are English only**, so
+that a single source file serves both audiences and stays diffable.
+
+[docs/GLOSSARY.md](docs/GLOSSARY.md) maps the technical terms between the two
+languages — useful when reading NVIDIA documentation after learning the concept in
+Vietnamese.
+
+## Current status
+
+Phases are being built out in order. Phase 1 is complete and verified end to end
+on an RTX 3060; later phases are landing exercise by exercise. Any exercise
+present in the tree builds and passes `ctest`; anything not yet written simply is
+not in the tree. See [docs/ROADMAP.md](docs/ROADMAP.md) for the full plan.
+
+## License
+
+MIT. Course materials referenced in the exercises belong to their respective
+authors.

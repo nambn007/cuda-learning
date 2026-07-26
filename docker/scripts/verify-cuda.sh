@@ -1,87 +1,138 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ============================================================
-# Verify CUDA environment is working correctly
-# Usage: verify-cuda
+# verify-cuda - check that the toolchain and GPU are usable
+# ============================================================
+# Run this first, before touching any exercise. It compiles and
+# runs a tiny kernel, which catches driver/toolkit mismatches that
+# `nvcc --version` alone would not.
 # ============================================================
 
-set -e
+echo "------------------------------------------------------------"
+echo "  CUDA environment verification"
+echo "------------------------------------------------------------"
+echo
 
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  🔍 CUDA Environment Verification"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
+STATUS=0
 
-# 1. Check nvcc
-echo "📦 NVCC Compiler:"
-nvcc --version | grep release
-echo ""
+echo "Compiler"
+if command -v nvcc >/dev/null 2>&1; then
+    echo "  nvcc    $(nvcc --version | grep -oP 'release \K[0-9.]+')"
+else
+    echo "  nvcc    MISSING"
+    STATUS=1
+fi
 
-# 2. Check GPU visibility
-echo "🖥️  GPU Info:"
-nvidia-smi --query-gpu=name,compute_cap,memory.total,driver_version --format=csv,noheader 2>/dev/null || echo "  ⚠️  nvidia-smi not available (GPU may not be passed through)"
-echo ""
+echo
+echo "GPU"
+if command -v nvidia-smi >/dev/null 2>&1; then
+    if nvidia-smi >/dev/null 2>&1; then
+        nvidia-smi --query-gpu=index,name,compute_cap,memory.total,driver_version \
+                   --format=csv,noheader | sed 's/^/  /'
+    else
+        echo "  nvidia-smi failed - the GPU is not passed through to this container"
+        STATUS=1
+    fi
+else
+    echo "  nvidia-smi not found - the GPU is not visible here"
+    STATUS=1
+fi
 
-# 3. Check CUDA libraries
-echo "📚 CUDA Libraries:"
-ls -1 ${CUDA_HOME}/lib64/libcublas.so* 2>/dev/null && echo "  ✅ cuBLAS" || echo "  ❌ cuBLAS not found"
-ls -1 ${CUDA_HOME}/lib64/libcufft.so* 2>/dev/null && echo "  ✅ cuFFT" || echo "  ❌ cuFFT not found"
-ls -1 ${CUDA_HOME}/lib64/libcusparse.so* 2>/dev/null && echo "  ✅ cuSPARSE" || echo "  ❌ cuSPARSE not found"
-ls -1 ${CUDA_HOME}/lib64/libcurand.so* 2>/dev/null && echo "  ✅ cuRAND" || echo "  ❌ cuRAND not found"
-echo ""
+echo
+echo "Libraries"
+for lib in cublas cufft cusparse curand cusolver; do
+    if ls "${CUDA_HOME:-/usr/local/cuda}"/lib64/lib${lib}.so* >/dev/null 2>&1; then
+        echo "  ok      ${lib}"
+    else
+        echo "  MISSING ${lib}"
+    fi
+done
 
-# 4. Check build tools
-echo "🛠️  Build Tools:"
-echo "  gcc:   $(gcc --version | head -1)"
-echo "  g++:   $(g++ --version | head -1)"
-echo "  cmake: $(cmake --version | head -1)"
-echo "  make:  $(make --version | head -1)"
-echo ""
+echo
+echo "Developer tools"
+for tool in cmake ninja gdb cuda-gdb compute-sanitizer ncu nsys cuobjdump nvdisasm; do
+    if command -v "${tool}" >/dev/null 2>&1; then
+        echo "  ok      ${tool}"
+    else
+        echo "  absent  ${tool}"
+    fi
+done
 
-# 5. Compile & run a simple CUDA program
-echo "🧪 Compile Test (Hello CUDA):"
-TMPDIR=$(mktemp -d)
-cat > "${TMPDIR}/test.cu" << 'EOF'
+echo
+echo "Compile and run test"
+TMPDIR_="$(mktemp -d)"
+cat > "${TMPDIR_}/test.cu" << 'EOF'
 #include <cstdio>
 
-__global__ void helloKernel() {
-    int tid = blockIdx.x * blockDim.x + threadIdx.x;
-    if (tid == 0) {
-        printf("  ✅ Hello from GPU! Thread %d, Block %d\n", threadIdx.x, blockIdx.x);
-    }
-}
+__global__ void addOne(int* v) { v[threadIdx.x] += 1; }
 
 int main() {
-    // Query device
+    int count = 0;
+    if (cudaGetDeviceCount(&count) != cudaSuccess || count == 0) {
+        printf("  no CUDA device available\n");
+        return 1;
+    }
+
     cudaDeviceProp prop;
-    cudaError_t err = cudaGetDeviceProperties(&prop, 0);
-    if (err != cudaSuccess) {
-        printf("  ❌ cudaGetDeviceProperties failed: %s\n", cudaGetErrorString(err));
+    if (cudaGetDeviceProperties(&prop, 0) != cudaSuccess) {
+        printf("  cudaGetDeviceProperties failed\n");
         return 1;
     }
-    printf("  GPU: %s (SM %d.%d, %d SMs, %zu MB)\n",
-           prop.name, prop.major, prop.minor,
-           prop.multiProcessorCount,
-           prop.totalGlobalMem / (1024*1024));
+    printf("  device: %s (sm_%d%d, %d SMs, %.1f GB)\n", prop.name, prop.major,
+           prop.minor, prop.multiProcessorCount,
+           prop.totalGlobalMem / (1024.0 * 1024.0 * 1024.0));
 
-    // Launch kernel
-    helloKernel<<<1, 32>>>();
-    err = cudaDeviceSynchronize();
-    if (err != cudaSuccess) {
-        printf("  ❌ Kernel launch failed: %s\n", cudaGetErrorString(err));
+    int host[32];
+    for (int i = 0; i < 32; ++i) host[i] = i;
+
+    int* dev = nullptr;
+    if (cudaMalloc(&dev, sizeof(host)) != cudaSuccess) {
+        printf("  cudaMalloc failed\n");
         return 1;
     }
+    cudaMemcpy(dev, host, sizeof(host), cudaMemcpyHostToDevice);
+    addOne<<<1, 32>>>(dev);
 
-    printf("  ✅ CUDA compilation & execution: OK\n");
+    cudaError_t err = cudaDeviceSynchronize();
+    if (err != cudaSuccess) {
+        printf("  kernel failed: %s\n", cudaGetErrorString(err));
+        cudaFree(dev);
+        return 1;
+    }
+    cudaMemcpy(host, dev, sizeof(host), cudaMemcpyDeviceToHost);
+    cudaFree(dev);
+
+    for (int i = 0; i < 32; ++i) {
+        if (host[i] != i + 1) {
+            printf("  wrong result at %d: %d\n", i, host[i]);
+            return 1;
+        }
+    }
+    printf("  kernel executed and produced the expected result\n");
     return 0;
 }
 EOF
 
-nvcc -arch=sm_75 -o "${TMPDIR}/test" "${TMPDIR}/test.cu" 2>&1 && \
-    "${TMPDIR}/test" 2>&1 || echo "  ❌ Compilation or execution failed"
+# -arch=native compiles for whatever GPU is installed (CUDA 11.5+).
+if nvcc -arch=native -o "${TMPDIR_}/test" "${TMPDIR_}/test.cu" 2>"${TMPDIR_}/err"; then
+    if "${TMPDIR_}/test"; then
+        echo "  compilation and execution: OK"
+    else
+        echo "  execution FAILED"
+        STATUS=1
+    fi
+else
+    echo "  compilation FAILED"
+    sed 's/^/    /' "${TMPDIR_}/err"
+    STATUS=1
+fi
+rm -rf "${TMPDIR_}"
 
-rm -rf "${TMPDIR}" 2>/dev/null
-
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  ✅ Verification complete!"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo
+echo "------------------------------------------------------------"
+if [ ${STATUS} -eq 0 ]; then
+    echo "  Environment is ready. Start with phase-1-foundation/README.md"
+else
+    echo "  Problems were found - see docs/SETUP.md for troubleshooting"
+fi
+echo "------------------------------------------------------------"
+exit ${STATUS}

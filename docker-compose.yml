@@ -1,10 +1,14 @@
 # ============================================================
-# CUDA Learning – Docker Compose
+# CUDA Learning - Docker Compose
 # ============================================================
-# Usage:
-#   docker compose up -d        # Start container
-#   docker compose exec cuda-dev bash  # Enter shell
-#   docker compose down         # Stop container
+#   docker compose up -d --build          # build and start
+#   docker compose exec cuda-dev bash     # get a shell
+#   docker compose down                   # stop
+#
+# Inside the container:
+#   verify-cuda            # check the toolchain and the GPU
+#   ./scripts/build.sh     # build every exercise
+#   ./scripts/run-all.sh   # run the reference solutions
 # ============================================================
 
 services:
@@ -12,10 +16,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        # Set to 0 to skip the ~500 MB Nsight Systems download.
+        INSTALL_NSIGHT_SYSTEMS: "1"
     container_name: cuda-learning-dev
     image: cuda-learning-dev:latest
 
-    # GPU access
+    # GPU passthrough. Requires the NVIDIA Container Toolkit:
+    #   https://docs.nvidia.com/datacenter/cloud-native/
     deploy:
       resources:
         reservations:
@@ -24,39 +32,37 @@ services:
               count: all
               capabilities: [gpu]
 
-    # Mount project directory
+    # The whole repository is bind-mounted, including build/, so
+    # compile_commands.json and the binaries stay visible to the
+    # editor running on the host.
     volumes:
       - .:/workspace
-      - cuda-build-cache:/workspace/build
 
-    # Keep container running
     stdin_open: true
     tty: true
 
-    # Environment
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
+      # `graphics` is needed by the Phase 5 CUDA/OpenGL exercise.
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
-      - CUDA_VISIBLE_DEVICES=0
-      - CUDAARCHS=75
       - TZ=Asia/Ho_Chi_Minh
 
-    # Network for Jupyter
     ports:
-      - "8899:8888"   # Jupyter Notebook
+      - "8899:8888"   # Jupyter -> http://localhost:8899
 
     working_dir: /workspace
-
-    # Restart policy
     restart: unless-stopped
 
-    # Resource limits
+    # Nsight Compute needs access to GPU performance counters.
+    # If `ncu` reports ERR_NVGPUCTRPERM, either add
+    #   cap_add: [SYS_ADMIN]
+    # here, or allow non-root profiling on the host:
+    #   https://developer.nvidia.com/nvidia-development-tools-solutions-err-nvgpuctrperm
+    cap_add:
+      - SYS_ADMIN
+
     shm_size: '2g'
     ulimits:
       memlock:
         soft: -1
         hard: -1
-
-volumes:
-  cuda-build-cache:
-    driver: local
