@@ -2,7 +2,7 @@
 
 # Phase 6 · Mastery
 
-> **Ongoing · 🏆 · 5 projects** — [Roadmap](../docs/ROADMAP.md) · [← Repository](../README.md)
+> **Ongoing · 🏆 · 3 projects** (each with a verified core module) — [Roadmap](../docs/ROADMAP.md) · [← Repository](../README.md)
 
 ## What this phase is for
 
@@ -29,8 +29,6 @@ The rest is yours. That is the point.
 |---|---|---|---|
 | [gpu-ray-tracer](projects/gpu-ray-tracer/) | ⭐⭐⭐⭐ | A path tracer producing a noise-free image | BVH traversal, divergence management, RNG per thread, denoising |
 | [mini-dl-framework](projects/mini-dl-framework/) | ⭐⭐⭐⭐⭐ | Train a small network end to end | Autograd, backward kernels, GEMM, operator fusion, memory pooling |
-| [fluid-simulation](projects/fluid-simulation/) | ⭐⭐⭐⭐ | Real-time interactive fluid | Stencils, red-black solvers, spatial hashing, OpenGL interop |
-| [gpu-database](projects/gpu-database/) | ⭐⭐⭐⭐ | Analytical queries over columnar data | Compaction, radix partitioning, hash joins, atomics |
 | [llm-inference-engine](projects/llm-inference-engine/) | ⭐⭐⭐⭐⭐ | Serve a small transformer | KV-cache paging, attention kernels, batching, quantisation |
 
 ## How to choose

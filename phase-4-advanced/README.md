@@ -20,22 +20,19 @@ rather than a last resort.
 
 | # | Exercise | Difficulty | Core idea |
 |---|---|---|---|
-| 01 | pinned-memory | ⭐⭐ | Pageable vs pinned transfer bandwidth |
-| 02 | streams-basics | ⭐⭐⭐ | Concurrency, and the default-stream trap |
-| 03 | streams-pipeline | ⭐⭐⭐ | Overlap H2D → kernel → D2H in chunks |
-| 04 | events-and-sync | ⭐⭐⭐ | `cudaEvent`, `cudaStreamWaitEvent`, dependency graphs by hand |
-| 05 | cuda-graphs | ⭐⭐⭐⭐ | Capture a pipeline, eliminate per-launch overhead |
-| 06 | cooperative-groups | ⭐⭐⭐⭐ | Tiled partitions, grid-wide synchronisation |
-| 07 | dynamic-parallelism | ⭐⭐⭐⭐ | Kernels launching kernels (CDP2 semantics, CUDA 12+) |
-| 08 | multi-gpu-basics | ⭐⭐⭐ | Device enumeration, peer access, P2P copies |
-| 09 | multi-gpu-matmul | ⭐⭐⭐⭐ | Splitting work across devices |
-| 10 | lock-free-queue | ⭐⭐⭐⭐⭐ | `atomicCAS`, `__threadfence`, memory ordering on a GPU |
-| 11 | register-pressure | ⭐⭐⭐ | `__launch_bounds__`, spilling, the occupancy trade-off |
-| 12 | ptx-and-sass | ⭐⭐⭐⭐ | `cuobjdump`, `nvdisasm`, inline PTX |
-| 13 | persistent-kernel | ⭐⭐⭐⭐ | Megakernels and on-device producer/consumer |
+| 01 ✅ | [pinned-and-streams](exercises/01-pinned-and-streams/) | ⭐⭐⭐ | Pinned memory, and turning `H2D + kernel + D2H` into `max(...)` |
+| 02 ⚠️ | [cuda-graphs](exercises/02-cuda-graphs/) | ⭐⭐⭐⭐ | Replay a recorded DAG with one launch; remove the CPU from the inner loop |
+| 03 ⚠️ | [atomics-and-ordering](exercises/03-atomics-and-ordering/) | ⭐⭐⭐⭐⭐ | Privatisation, `atomicCAS`, and why `__threadfence` is not optional |
 
-Exercises 08 and 09 detect a single-GPU machine and skip cleanly — they are not
-failures.
+✅ verified on an RTX 3060 · ⚠️ code complete, not yet run on the reference machine
+(so its README carries no measured numbers)
+
+### Deferred
+
+Specified in [docs/ROADMAP.md](../docs/ROADMAP.md) but not written yet:
+**events-and-sync**, **cooperative-groups**, **dynamic-parallelism**,
+**multi-gpu-basics**, **multi-gpu-matmul**, **lock-free-queue**,
+**register-pressure**, **ptx-and-sass**, **persistent-kernel**.
 
 ## Build and run
 

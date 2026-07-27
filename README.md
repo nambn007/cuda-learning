@@ -14,8 +14,10 @@
 
 ## What this is
 
-Six phases, 63 exercises and 5 portfolio projects that take you from "I know some
-C++" to writing GPU kernels you can defend with a profiler.
+Six phases taking you from "I know some C++" to writing GPU kernels you can defend
+with a profiler. **33 exercises and 3 portfolio projects are implemented today**;
+the full 63-exercise plan is specified in [docs/ROADMAP.md](docs/ROADMAP.md) and the
+remaining folders can be scaffolded with one command.
 
 Every exercise ships as **four files**:
 
@@ -65,10 +67,10 @@ No Docker? See [docs/SETUP.md](docs/SETUP.md) for a native install.
 |---|---|---|---|---|
 | [1](phase-1-foundation/) | **Foundation** — C++, caches, SIMD, roofline | 8 | 3–4 weeks | ⭐ |
 | [2](phase-2-cuda-fundamentals/) | **CUDA Fundamentals** — kernels, memory, indexing | 12 | 4–6 weeks | ⭐⭐ |
-| [3](phase-3-intermediate/) | **Intermediate** — coalescing, shared memory, parallel patterns | 16 | 6–8 weeks | ⭐⭐⭐ |
-| [4](phase-4-advanced/) | **Advanced** — streams, graphs, multi-GPU, atomics, PTX | 13 | 8–10 weeks | ⭐⭐⭐⭐ |
-| [5](phase-5-expert/) | **Expert** — cuBLAS, CUB, Tensor Cores, mixed precision | 14 | 6–8 weeks | ⭐⭐⭐⭐⭐ |
-| [6](phase-6-mastery/) | **Mastery** — five portfolio projects | 5 projects | ongoing | 🏆 |
+| [3](phase-3-intermediate/) | **Intermediate** — coalescing, shared memory, parallel patterns | 7 of 16 | 6–8 weeks | ⭐⭐⭐ |
+| [4](phase-4-advanced/) | **Advanced** — pinned memory, streams, graphs, atomics | 3 | 8–10 weeks | ⭐⭐⭐⭐ |
+| [5](phase-5-expert/) | **Expert** — Thrust/CUB, cuBLAS, Tensor Cores | 3 | 6–8 weeks | ⭐⭐⭐⭐⭐ |
+| [6](phase-6-mastery/) | **Mastery** — three portfolio projects | 3 projects | ongoing | 🏆 |
 
 Full breakdown with per-exercise objectives: **[docs/ROADMAP.md](docs/ROADMAP.md)**.
 
@@ -143,10 +145,23 @@ Vietnamese.
 
 ## Current status
 
-Phases are being built out in order. Phase 1 is complete and verified end to end
-on an RTX 3060; later phases are landing exercise by exercise. Any exercise
-present in the tree builds and passes `ctest`; anything not yet written simply is
-not in the tree. See [docs/ROADMAP.md](docs/ROADMAP.md) for the full plan.
+| Phase | Implemented | Verified on an RTX 3060 |
+|---|---|---|
+| 1 Foundation | 8 / 8 | all |
+| 2 CUDA Fundamentals | 12 / 12 | all |
+| 3 Intermediate | 7 / 16 | all 7 |
+| 4 Advanced | 3 (of a larger plan) | 1 of 3 |
+| 5 Expert | 3 (of a larger plan) | 2 of 3 |
+| 6 Mastery | 3 projects | all 3 core modules |
+
+**Everything present in the tree builds**, and every exercise marked verified passes
+`ctest` on the reference machine. A handful of Phase 4/5 exercises are code-complete
+but have not been run there yet — their READMEs say so and contain **no measured
+numbers** rather than invented ones.
+
+Deferred exercises are listed in each phase README and specified in
+[docs/ROADMAP.md](docs/ROADMAP.md). `scripts/new-exercise.sh` scaffolds one in a
+single command.
 
 ## License
 

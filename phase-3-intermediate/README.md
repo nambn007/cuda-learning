@@ -18,24 +18,29 @@ every real kernel is built from, and finally the tuning and profiling skills
 
 ## Exercises
 
+**Status: 7 of 16 implemented.** Exercises 01–07 are complete and verified on an
+RTX 3060. Exercises 08–16 are specified below but **not yet written** — the folders
+are absent from the tree, and `scripts/new-exercise.sh` will scaffold them when you
+or a contributor get to them.
+
 | # | Exercise | Difficulty | Core idea |
 |---|---|---|---|
-| 01 | memory-coalescing | ⭐⭐⭐ | The single biggest GPU performance factor, measured |
-| 02 | shared-memory-basics | ⭐⭐ | `__shared__`, `__syncthreads()`, cooperation within a block |
-| 03 | bank-conflicts | ⭐⭐⭐ | 32 banks; why padding by one element fixes a 32× slowdown |
-| 04 | tiled-matmul | ⭐⭐⭐ | Phase 1/02's blocking in shared memory — and why the win comes from register tiling, not the tiling itself |
-| 05 | transpose-optimized | ⭐⭐⭐ | Coalesced read *and* write through a shared tile |
-| 06 | reduction-variants | ⭐⭐⭐ | Six kernels, each faster than the last — the classic study |
-| 07 | warp-shuffle | ⭐⭐⭐ | `__shfl_down_sync`, ballot, vote — registers instead of shared memory |
-| 08 | atomics | ⭐⭐ | `atomicAdd`, `atomicCAS`, contention, custom float atomics |
-| 09 | histogram | ⭐⭐⭐ | Privatisation: global contention becomes shared-memory contention |
-| 10 | scan-hillis-steele | ⭐⭐⭐ | Inclusive scan within a block |
-| 11 | scan-blelloch | ⭐⭐⭐⭐ | Work-efficient scan, arbitrary length, multi-block |
-| 12 | stream-compaction | ⭐⭐⭐ | Scan + scatter — the backbone of filtering on a GPU |
-| 13 | conv-1d-constant | ⭐⭐ | `__constant__` memory and its broadcast cache |
-| 14 | conv-2d-shared | ⭐⭐⭐ | 2D stencil with a haloed shared tile |
-| 15 | occupancy-tuning | ⭐⭐⭐ | Registers vs shared memory vs block size; when high occupancy hurts |
-| 16 | profiling-nsight | ⭐⭐⭐ | Nsight Systems and Nsight Compute on your own kernels |
+| 01 ✅ | memory-coalescing | ⭐⭐⭐ | The single biggest GPU performance factor, measured |
+| 02 ✅ | shared-memory-basics | ⭐⭐ | `__shared__`, `__syncthreads()`, cooperation within a block |
+| 03 ✅ | bank-conflicts | ⭐⭐⭐ | 32 banks; why padding by one element fixes a 32× slowdown |
+| 04 ✅ | tiled-matmul | ⭐⭐⭐ | Phase 1/02's blocking in shared memory — and why the win comes from register tiling, not the tiling itself |
+| 05 ✅ | transpose-optimized | ⭐⭐⭐ | Coalesced read *and* write through a shared tile |
+| 06 ✅ | reduction-variants | ⭐⭐⭐ | Six kernels, each faster than the last — the classic study |
+| 07 ✅ | warp-shuffle | ⭐⭐⭐ | `__shfl_down_sync`, ballot, vote — registers instead of shared memory |
+| 08 🚧 | atomics | ⭐⭐ | `atomicAdd`, `atomicCAS`, contention, custom float atomics |
+| 09 🚧 | histogram | ⭐⭐⭐ | Privatisation: global contention becomes shared-memory contention |
+| 10 🚧 | scan-hillis-steele | ⭐⭐⭐ | Inclusive scan within a block |
+| 11 🚧 | scan-blelloch | ⭐⭐⭐⭐ | Work-efficient scan, arbitrary length, multi-block |
+| 12 🚧 | stream-compaction | ⭐⭐⭐ | Scan + scatter — the backbone of filtering on a GPU |
+| 13 🚧 | conv-1d-constant | ⭐⭐ | `__constant__` memory and its broadcast cache |
+| 14 🚧 | conv-2d-shared | ⭐⭐⭐ | 2D stencil with a haloed shared tile |
+| 15 🚧 | occupancy-tuning | ⭐⭐⭐ | Registers vs shared memory vs block size; when high occupancy hurts |
+| 16 🚧 | profiling-nsight | ⭐⭐⭐ | Nsight Systems and Nsight Compute on your own kernels |
 
 ## Build and run
 

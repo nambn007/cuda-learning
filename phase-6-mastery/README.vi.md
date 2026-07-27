@@ -2,7 +2,7 @@
 
 # Giai đoạn 6 · Làm chủ
 
-> **Liên tục · 🏆 · 5 dự án** — [Lộ trình](../docs/ROADMAP.vi.md) · [← Kho mã](../README.vi.md)
+> **Liên tục · 🏆 · 3 dự án** (mỗi dự án có một module lõi đã kiểm chứng) — [Lộ trình](../docs/ROADMAP.vi.md) · [← Kho mã](../README.vi.md)
 
 ## Giai đoạn này để làm gì
 
@@ -29,8 +29,6 @@ Phần còn lại là của bạn. Đó chính là mục đích.
 |---|---|---|---|
 | [gpu-ray-tracer](projects/gpu-ray-tracer/) | ⭐⭐⭐⭐ | Path tracer cho ra ảnh sạch nhiễu | Duyệt BVH, xử lý phân kỳ, RNG cho mỗi thread, khử nhiễu |
 | [mini-dl-framework](projects/mini-dl-framework/) | ⭐⭐⭐⭐⭐ | Huấn luyện một mạng nhỏ từ đầu đến cuối | Autograd, kernel lan truyền ngược, GEMM, gộp toán tử, memory pool |
-| [fluid-simulation](projects/fluid-simulation/) | ⭐⭐⭐⭐ | Mô phỏng chất lỏng tương tác thời gian thực | Stencil, giải red-black, băm không gian, interop OpenGL |
-| [gpu-database](projects/gpu-database/) | ⭐⭐⭐⭐ | Truy vấn phân tích trên dữ liệu dạng cột | Nén dòng, phân hoạch radix, hash join, atomic |
 | [llm-inference-engine](projects/llm-inference-engine/) | ⭐⭐⭐⭐⭐ | Phục vụ một transformer nhỏ | Phân trang KV-cache, kernel attention, gom lô, lượng tử hoá |
 
 ## Chọn dự án nào

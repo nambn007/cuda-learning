@@ -20,28 +20,20 @@ thật sự thắng — thường là **fusion (gộp kernel)**, khi một kerne
 
 | # | Bài tập | Độ khó | Ý tưởng cốt lõi |
 |---|---|---|---|
-| 01 | thrust-basics | ⭐⭐ | Thuật toán kiểu STL trên thiết bị |
-| 02 | cub-primitives | ⭐⭐⭐ | Nguyên thuỷ mức block/device so với bản tự viết của bạn |
-| 03 | cublas-gemm | ⭐⭐⭐ | Cái bẫy column-major; bản tiled matmul của bạn còn cách bao xa |
-| 04 | cublas-batched | ⭐⭐⭐ | GEMM theo lô và theo lô có bước nhảy |
-| 05 | curand-monte-carlo | ⭐⭐⭐ | Sinh số ngẫu nhiên trên thiết bị, và "ngẫu nhiên song song" nghĩa là gì |
-| 06 | cufft-convolution | ⭐⭐⭐ | Tích chập bằng FFT |
-| 07 | cusparse-spmv | ⭐⭐⭐⭐ | SpMV dạng CSR — bất quy tắc, nghẽn bộ nhớ, không tránh được |
-| 08 | mixed-precision | ⭐⭐⭐⭐ | FP16/BF16/TF32, vector hoá `half2`, đánh đổi độ chính xác và tốc độ |
-| 09 | tensor-core-wmma | ⭐⭐⭐⭐⭐ | API WMMA (cần sm_70+) |
-| 10 | cutlass-gemm | ⭐⭐⭐⭐⭐ | GEMM dạng template, gộp epilogue *(phụ thuộc tuỳ chọn)* |
-| 11 | pytorch-extension | ⭐⭐⭐⭐ | Toán tử CUDA tự viết gọi được từ Python *(phụ thuộc tuỳ chọn)* |
-| 12 | nvrtc-jit | ⭐⭐⭐⭐ | Biên dịch lúc chạy và driver API |
-| 13 | cuda-opengl-interop | ⭐⭐⭐⭐ | Trực quan hoá không sao chép *(phụ thuộc tuỳ chọn)* |
-| 14 | kernel-fusion | ⭐⭐⭐⭐ | Ít lượt duyệt bộ nhớ hơn — phép tối ưu còn lại có đòn bẩy lớn nhất |
+| 01 ✅ | [thrust-and-cub](exercises/01-thrust-and-cub/README.vi.md) | ⭐⭐ | Hiệu chuẩn: bản reduction GĐ 3 của bạn ngang bằng CUB |
+| 02 ⚠️ | [cublas-gemm](exercises/02-cublas-gemm/README.vi.md) | ⭐⭐⭐ | Cái bẫy column-major, và GEMM của bạn còn cách bao xa |
+| 03 ✅ | [tensor-core-wmma](exercises/03-tensor-core-wmma/README.vi.md) | ⭐⭐⭐⭐⭐ | 8192 FLOP trong một lệnh — và cái giá về độ chính xác |
 
-Các bài ghi *phụ thuộc tuỳ chọn* chỉ được build khi chạy:
+✅ đã kiểm chứng trên RTX 3060 · ⚠️ mã hoàn chỉnh, chưa chạy trên máy tham chiếu
 
-```bash
-./scripts/build.sh --optional
-```
+### Tạm hoãn
 
-Bài 09 cần compute capability ≥ 7.0 và sẽ bỏ qua gọn gàng trên card cũ hơn.
+Đã đặc tả trong [docs/ROADMAP.vi.md](../docs/ROADMAP.vi.md) nhưng chưa viết:
+**cublas-batched**, **curand-monte-carlo**, **cufft-convolution**, **cusparse-spmv**,
+**mixed-precision**, **cutlass-gemm**, **pytorch-extension**, **nvrtc-jit**,
+**cuda-opengl-interop**, **kernel-fusion**.
+
+Bài 03 cần compute capability ≥ 7.0 và sẽ bỏ qua gọn gàng trên card cũ hơn.
 
 ## Build và chạy
 

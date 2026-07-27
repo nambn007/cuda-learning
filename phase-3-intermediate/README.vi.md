@@ -18,24 +18,29 @@ kỹ năng tinh chỉnh và profiling (15–16) để biết nên chọn mẫu n
 
 ## Danh sách bài tập
 
+**Tình trạng: đã làm 7/16.** Bài 01–07 hoàn chỉnh và đã kiểm chứng trên RTX 3060.
+Bài 08–16 được đặc tả bên dưới nhưng **chưa được viết** — thư mục của chúng chưa có
+trong cây mã, và `scripts/new-exercise.sh` sẽ dựng khung khi bạn hoặc người đóng góp
+bắt tay vào.
+
 | # | Bài tập | Độ khó | Ý tưởng cốt lõi |
 |---|---|---|---|
-| 01 | memory-coalescing | ⭐⭐⭐ | Yếu tố hiệu năng lớn nhất của GPU, đo tận tay |
-| 02 | shared-memory-basics | ⭐⭐ | `__shared__`, `__syncthreads()`, hợp tác trong một block |
-| 03 | bank-conflicts | ⭐⭐⭐ | 32 bank; vì sao đệm thêm một phần tử sửa được mức chậm 32 lần |
-| 04 | tiled-matmul | ⭐⭐⭐ | Blocking của GĐ 1/02 đặt trong shared memory — và vì sao thắng lợi đến từ register tiling chứ không từ bản thân việc tiling |
-| 05 | transpose-optimized | ⭐⭐⭐ | Đọc *và* ghi đều coalesced nhờ một tile chia sẻ |
-| 06 | reduction-variants | ⭐⭐⭐ | Sáu kernel, cái sau nhanh hơn cái trước — bài nghiên cứu kinh điển |
-| 07 | warp-shuffle | ⭐⭐⭐ | `__shfl_down_sync`, ballot, vote — dùng thanh ghi thay shared memory |
-| 08 | atomics | ⭐⭐ | `atomicAdd`, `atomicCAS`, tranh chấp, atomic float tự viết |
-| 09 | histogram | ⭐⭐⭐ | Riêng tư hoá: tranh chấp toàn cục thành tranh chấp trong shared memory |
-| 10 | scan-hillis-steele | ⭐⭐⭐ | Quét tiền tố bao gồm, trong phạm vi một block |
-| 11 | scan-blelloch | ⭐⭐⭐⭐ | Quét hiệu quả công việc, độ dài tuỳ ý, nhiều block |
-| 12 | stream-compaction | ⭐⭐⭐ | Scan + scatter — xương sống của việc lọc dữ liệu trên GPU |
-| 13 | conv-1d-constant | ⭐⭐ | Bộ nhớ `__constant__` và cache quảng bá của nó |
-| 14 | conv-2d-shared | ⭐⭐⭐ | Stencil 2D với tile chia sẻ có vành halo |
-| 15 | occupancy-tuning | ⭐⭐⭐ | Thanh ghi vs shared memory vs kích thước block; khi occupancy cao lại hại |
-| 16 | profiling-nsight | ⭐⭐⭐ | Nsight Systems và Nsight Compute trên chính kernel của bạn |
+| 01 ✅ | memory-coalescing | ⭐⭐⭐ | Yếu tố hiệu năng lớn nhất của GPU, đo tận tay |
+| 02 ✅ | shared-memory-basics | ⭐⭐ | `__shared__`, `__syncthreads()`, hợp tác trong một block |
+| 03 ✅ | bank-conflicts | ⭐⭐⭐ | 32 bank; vì sao đệm thêm một phần tử sửa được mức chậm 32 lần |
+| 04 ✅ | tiled-matmul | ⭐⭐⭐ | Blocking của GĐ 1/02 đặt trong shared memory — và vì sao thắng lợi đến từ register tiling chứ không từ bản thân việc tiling |
+| 05 ✅ | transpose-optimized | ⭐⭐⭐ | Đọc *và* ghi đều coalesced nhờ một tile chia sẻ |
+| 06 ✅ | reduction-variants | ⭐⭐⭐ | Sáu kernel, cái sau nhanh hơn cái trước — bài nghiên cứu kinh điển |
+| 07 ✅ | warp-shuffle | ⭐⭐⭐ | `__shfl_down_sync`, ballot, vote — dùng thanh ghi thay shared memory |
+| 08 🚧 | atomics | ⭐⭐ | `atomicAdd`, `atomicCAS`, tranh chấp, atomic float tự viết |
+| 09 🚧 | histogram | ⭐⭐⭐ | Riêng tư hoá: tranh chấp toàn cục thành tranh chấp trong shared memory |
+| 10 🚧 | scan-hillis-steele | ⭐⭐⭐ | Quét tiền tố bao gồm, trong phạm vi một block |
+| 11 🚧 | scan-blelloch | ⭐⭐⭐⭐ | Quét hiệu quả công việc, độ dài tuỳ ý, nhiều block |
+| 12 🚧 | stream-compaction | ⭐⭐⭐ | Scan + scatter — xương sống của việc lọc dữ liệu trên GPU |
+| 13 🚧 | conv-1d-constant | ⭐⭐ | Bộ nhớ `__constant__` và cache quảng bá của nó |
+| 14 🚧 | conv-2d-shared | ⭐⭐⭐ | Stencil 2D với tile chia sẻ có vành halo |
+| 15 🚧 | occupancy-tuning | ⭐⭐⭐ | Thanh ghi vs shared memory vs kích thước block; khi occupancy cao lại hại |
+| 16 🚧 | profiling-nsight | ⭐⭐⭐ | Nsight Systems và Nsight Compute trên chính kernel của bạn |
 
 ## Build và chạy
 

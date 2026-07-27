@@ -20,21 +20,19 @@ phải phương án cuối cùng.
 
 | # | Bài tập | Độ khó | Ý tưởng cốt lõi |
 |---|---|---|---|
-| 01 | pinned-memory | ⭐⭐ | Băng thông truyền: bộ nhớ pageable vs pinned |
-| 02 | streams-basics | ⭐⭐⭐ | Chạy đồng thời, và cái bẫy của default stream |
-| 03 | streams-pipeline | ⭐⭐⭐ | Chồng lấn H2D → kernel → D2H theo từng khối |
-| 04 | events-and-sync | ⭐⭐⭐ | `cudaEvent`, `cudaStreamWaitEvent`, tự dựng đồ thị phụ thuộc |
-| 05 | cuda-graphs | ⭐⭐⭐⭐ | Ghi lại một pipeline, xoá bỏ chi phí launch từng lệnh |
-| 06 | cooperative-groups | ⭐⭐⭐⭐ | Phân hoạch theo tile, đồng bộ toàn grid |
-| 07 | dynamic-parallelism | ⭐⭐⭐⭐ | Kernel gọi kernel (ngữ nghĩa CDP2, CUDA 12+) |
-| 08 | multi-gpu-basics | ⭐⭐⭐ | Liệt kê thiết bị, truy cập ngang hàng, sao chép P2P |
-| 09 | multi-gpu-matmul | ⭐⭐⭐⭐ | Chia việc trên nhiều thiết bị |
-| 10 | lock-free-queue | ⭐⭐⭐⭐⭐ | `atomicCAS`, `__threadfence`, trật tự bộ nhớ trên GPU |
-| 11 | register-pressure | ⭐⭐⭐ | `__launch_bounds__`, tràn thanh ghi, đánh đổi occupancy |
-| 12 | ptx-and-sass | ⭐⭐⭐⭐ | `cuobjdump`, `nvdisasm`, PTX nội tuyến |
-| 13 | persistent-kernel | ⭐⭐⭐⭐ | Megakernel và producer/consumer trên thiết bị |
+| 01 ✅ | [pinned-and-streams](exercises/01-pinned-and-streams/README.vi.md) | ⭐⭐⭐ | Bộ nhớ ghim, và biến `H2D + kernel + D2H` thành `max(...)` |
+| 02 ⚠️ | [cuda-graphs](exercises/02-cuda-graphs/README.vi.md) | ⭐⭐⭐⭐ | Phát lại một DAG đã ghi bằng một lệnh launch; đưa CPU ra khỏi vòng lặp trong |
+| 03 ⚠️ | [atomics-and-ordering](exercises/03-atomics-and-ordering/README.vi.md) | ⭐⭐⭐⭐⭐ | Riêng tư hoá, `atomicCAS`, và vì sao `__threadfence` không phải tuỳ chọn |
 
-Bài 08 và 09 tự phát hiện máy chỉ có một GPU và bỏ qua gọn gàng — đó không phải lỗi.
+✅ đã kiểm chứng trên RTX 3060 · ⚠️ mã hoàn chỉnh, chưa chạy trên máy tham chiếu
+(nên README của nó không có số đo nào)
+
+### Tạm hoãn
+
+Đã đặc tả trong [docs/ROADMAP.vi.md](../docs/ROADMAP.vi.md) nhưng chưa viết:
+**events-and-sync**, **cooperative-groups**, **dynamic-parallelism**,
+**multi-gpu-basics**, **multi-gpu-matmul**, **lock-free-queue**,
+**register-pressure**, **ptx-and-sass**, **persistent-kernel**.
 
 ## Build và chạy
 

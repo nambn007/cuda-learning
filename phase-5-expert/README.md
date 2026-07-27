@@ -20,28 +20,20 @@ a round trip through DRAM that a library call cannot.
 
 | # | Exercise | Difficulty | Core idea |
 |---|---|---|---|
-| 01 | thrust-basics | ⭐⭐ | STL-style algorithms on the device |
-| 02 | cub-primitives | ⭐⭐⭐ | Block/device primitives vs your hand-written versions |
-| 03 | cublas-gemm | ⭐⭐⭐ | The column-major trap; how far your tiled matmul really is |
-| 04 | cublas-batched | ⭐⭐⭐ | Batched and strided-batched GEMM |
-| 05 | curand-monte-carlo | ⭐⭐⭐ | Device-side RNG, and what "parallel random" means |
-| 06 | cufft-convolution | ⭐⭐⭐ | Convolution via FFT |
-| 07 | cusparse-spmv | ⭐⭐⭐⭐ | CSR SpMV — irregular, memory bound, unavoidable |
-| 08 | mixed-precision | ⭐⭐⭐⭐ | FP16/BF16/TF32, `half2` vectorisation, accuracy vs speed |
-| 09 | tensor-core-wmma | ⭐⭐⭐⭐⭐ | The WMMA API (needs sm_70+) |
-| 10 | cutlass-gemm | ⭐⭐⭐⭐⭐ | Templated GEMM, epilogue fusion *(optional dependency)* |
-| 11 | pytorch-extension | ⭐⭐⭐⭐ | A custom CUDA op callable from Python *(optional dependency)* |
-| 12 | nvrtc-jit | ⭐⭐⭐⭐ | Runtime compilation and the driver API |
-| 13 | cuda-opengl-interop | ⭐⭐⭐⭐ | Zero-copy visualisation *(optional dependency)* |
-| 14 | kernel-fusion | ⭐⭐⭐⭐ | Fewer passes over memory — the highest-leverage optimisation left |
+| 01 ✅ | [thrust-and-cub](exercises/01-thrust-and-cub/) | ⭐⭐ | Calibration: your Phase 3 reduction matches CUB exactly |
+| 02 ⚠️ | [cublas-gemm](exercises/02-cublas-gemm/) | ⭐⭐⭐ | The column-major trap, and how far your GEMM really is |
+| 03 ✅ | [tensor-core-wmma](exercises/03-tensor-core-wmma/) | ⭐⭐⭐⭐⭐ | 8192 FLOPs in one instruction — and what it costs in precision |
 
-Exercises marked *optional dependency* build only with:
+✅ verified on an RTX 3060 · ⚠️ code complete, not yet run on the reference machine
 
-```bash
-./scripts/build.sh --optional
-```
+### Deferred
 
-Exercise 09 requires compute capability ≥ 7.0 and skips cleanly on older cards.
+Specified in [docs/ROADMAP.md](../docs/ROADMAP.md) but not written yet:
+**cublas-batched**, **curand-monte-carlo**, **cufft-convolution**, **cusparse-spmv**,
+**mixed-precision**, **cutlass-gemm**, **pytorch-extension**, **nvrtc-jit**,
+**cuda-opengl-interop**, **kernel-fusion**.
+
+Exercise 03 requires compute capability ≥ 7.0 and skips cleanly on older cards.
 
 ## Build and run
 
