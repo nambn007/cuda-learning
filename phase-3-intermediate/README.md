@@ -23,7 +23,7 @@ every real kernel is built from, and finally the tuning and profiling skills
 | 01 | memory-coalescing | ⭐⭐⭐ | The single biggest GPU performance factor, measured |
 | 02 | shared-memory-basics | ⭐⭐ | `__shared__`, `__syncthreads()`, cooperation within a block |
 | 03 | bank-conflicts | ⭐⭐⭐ | 32 banks; why padding by one element fixes a 32× slowdown |
-| 04 | tiled-matmul | ⭐⭐⭐ | Phase 1/02's blocking in shared memory — worth 5–10× here |
+| 04 | tiled-matmul | ⭐⭐⭐ | Phase 1/02's blocking in shared memory — and why the win comes from register tiling, not the tiling itself |
 | 05 | transpose-optimized | ⭐⭐⭐ | Coalesced read *and* write through a shared tile |
 | 06 | reduction-variants | ⭐⭐⭐ | Six kernels, each faster than the last — the classic study |
 | 07 | warp-shuffle | ⭐⭐⭐ | `__shfl_down_sync`, ballot, vote — registers instead of shared memory |

@@ -23,7 +23,7 @@ kỹ năng tinh chỉnh và profiling (15–16) để biết nên chọn mẫu n
 | 01 | memory-coalescing | ⭐⭐⭐ | Yếu tố hiệu năng lớn nhất của GPU, đo tận tay |
 | 02 | shared-memory-basics | ⭐⭐ | `__shared__`, `__syncthreads()`, hợp tác trong một block |
 | 03 | bank-conflicts | ⭐⭐⭐ | 32 bank; vì sao đệm thêm một phần tử sửa được mức chậm 32 lần |
-| 04 | tiled-matmul | ⭐⭐⭐ | Blocking của GĐ 1/02 đặt trong shared memory — ở đây đáng giá 5–10 lần |
+| 04 | tiled-matmul | ⭐⭐⭐ | Blocking của GĐ 1/02 đặt trong shared memory — và vì sao thắng lợi đến từ register tiling chứ không từ bản thân việc tiling |
 | 05 | transpose-optimized | ⭐⭐⭐ | Đọc *và* ghi đều coalesced nhờ một tile chia sẻ |
 | 06 | reduction-variants | ⭐⭐⭐ | Sáu kernel, cái sau nhanh hơn cái trước — bài nghiên cứu kinh điển |
 | 07 | warp-shuffle | ⭐⭐⭐ | `__shfl_down_sync`, ballot, vote — dùng thanh ghi thay shared memory |

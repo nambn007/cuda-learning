@@ -55,11 +55,12 @@ size sweep so you can see exactly where the crossover is. The reason:
 - Only once the matrices clearly exceed L3 (`n = 2048`, `B` = 16 MB) does manual
   blocking start to win — and even then, modestly.
 
-**This is exactly why the same idea is worth 5–10× on a GPU.** A GPU has no large
-automatic cache to fall back on: an SM has ~128 KB of L1/shared *shared between
-1536 threads*, and nothing prefetches for you. There, the choice is manual tiling
-or DRAM. Phase 3 exercise 04 rewrites this same loop nest with `__shared__`
-memory, and there the speedup is unmissable.
+**The same tension reappears on a GPU, and the answer there is more interesting.**
+Phase 3 exercise 04 rewrites this loop nest with `__shared__` memory and measures
+it: manual tiling on its own buys only ~1.2×, for exactly the reason you are seeing
+here — the hardware caches were already capturing the reuse. The large win (3×)
+comes from a *second* level of tiling, into registers, which the cache cannot do
+for you. Keep that in mind when you get there.
 
 So the takeaway from this exercise is really two things: **loop order is a huge,
 free win everywhere**, and **manual blocking is only worth it when the hardware

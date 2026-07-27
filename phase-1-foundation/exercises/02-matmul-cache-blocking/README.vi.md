@@ -54,11 +54,12 @@ bảng quét kích thước để bạn thấy chính xác điểm giao cắt n�
 - Chỉ khi các ma trận vượt hẳn L3 (`n = 2048`, `B` = 16 MB) thì blocking thủ công
   mới bắt đầu thắng — và cũng chỉ thắng khiêm tốn.
 
-**Chính vì vậy mà cùng ý tưởng đó lại đáng giá 5–10 lần trên GPU.** GPU không có
-một tầng cache tự động lớn để dựa vào: mỗi SM chỉ có ~128 KB L1/shared *dùng chung
-cho 1536 thread*, và không có gì prefetch hộ bạn. Ở đó, lựa chọn chỉ là tiling thủ
-công hoặc chịu đọc DRAM. Giai đoạn 3 bài 04 viết lại đúng cấu trúc vòng lặp này
-bằng bộ nhớ `__shared__`, và ở đó mức tăng tốc là không thể bỏ qua.
+**Sự giằng co này xuất hiện lại trên GPU, và câu trả lời ở đó thú vị hơn.** Giai
+đoạn 3 bài 04 viết lại đúng cấu trúc vòng lặp này bằng bộ nhớ `__shared__` rồi đo:
+tiling thủ công tự nó chỉ mua được ~1.2 lần, đúng vì lý do bạn đang thấy ở đây —
+cache phần cứng vốn đã nắm được phần tái sử dụng. Thắng lợi lớn (3 lần) đến từ một
+tầng tiling *thứ hai*, xuống thanh ghi, thứ mà cache không làm hộ bạn được. Hãy nhớ
+điều đó khi bạn tới bài ấy.
 
 Vậy bài học rút ra ở đây thật ra gồm hai điều: **thứ tự vòng lặp là một chiến
 thắng lớn và miễn phí ở mọi nơi**, và **blocking thủ công chỉ đáng làm khi phần
